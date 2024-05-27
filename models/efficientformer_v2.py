@@ -13,7 +13,7 @@ import itertools
 from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.models.layers import DropPath, trunc_normal_
 from timm.models.registry import register_model
-from timm.models.layers.helpers import to_2tuple
+# from timm.models.layers.helpers import to_2tuple
 
 EfficientFormer_width = {
     'L': [40, 80, 192, 384],  # 26m 83.3% 6attn
@@ -656,7 +656,6 @@ def _cfg(url='', **kwargs):
     }
 
 
-@register_model
 def efficientformerv2_s0(pretrained=False, **kwargs):
     model = EfficientFormerV2(
         layers=EfficientFormer_depth['S0'],
@@ -670,7 +669,6 @@ def efficientformerv2_s0(pretrained=False, **kwargs):
     return model
 
 
-@register_model
 def efficientformerv2_s1(pretrained=False, **kwargs):
     model = EfficientFormerV2(
         layers=EfficientFormer_depth['S1'],
@@ -684,7 +682,6 @@ def efficientformerv2_s1(pretrained=False, **kwargs):
     return model
 
 
-@register_model
 def efficientformerv2_s2(pretrained=False, **kwargs):
     model = EfficientFormerV2(
         layers=EfficientFormer_depth['S2'],
@@ -698,7 +695,6 @@ def efficientformerv2_s2(pretrained=False, **kwargs):
     return model
 
 
-@register_model
 def efficientformerv2_l(pretrained=False, **kwargs):
     model = EfficientFormerV2(
         layers=EfficientFormer_depth['L'],

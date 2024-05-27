@@ -12,7 +12,8 @@ import itertools
 from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.models.layers import DropPath, trunc_normal_
 from timm.models.registry import register_model
-from timm.models.layers.helpers import to_2tuple
+
+# from timm.models.layers.helpers import to_2tuple
 
 EfficientFormer_width = {
     'l1': [48, 96, 224, 448],
@@ -75,13 +76,10 @@ class Attention(torch.nn.Module):
         q = q.permute(0, 2, 1, 3)
         k = k.permute(0, 2, 1, 3)
         v = v.permute(0, 2, 1, 3)
+        attn = (q @ k.transpose(-2, -1)) * self.scale
+        # axc = self.attention_biases[:, self.attention_bias_idxs]if self.training else self.ab
+        # attn = attn + axc
 
-        attn = (
-                (q @ k.transpose(-2, -1)) * self.scale
-                +
-                (self.attention_biases[:, self.attention_bias_idxs]
-                 if self.training else self.ab)
-        )
         attn = attn.softmax(dim=-1)
         x = (attn @ v).transpose(1, 2).reshape(B, N, self.dh)
         x = self.proj(x)
@@ -108,9 +106,9 @@ class Embedding(nn.Module):
     def __init__(self, patch_size=16, stride=16, padding=0,
                  in_chans=3, embed_dim=768, norm_layer=nn.BatchNorm2d):
         super().__init__()
-        patch_size = to_2tuple(patch_size)
-        stride = to_2tuple(stride)
-        padding = to_2tuple(padding)
+        # patch_size = to_2tuple(patch_size)
+        # stride = to_2tuple(stride)
+        # padding = to_2tuple(padding)
         self.proj = nn.Conv2d(in_chans, embed_dim, kernel_size=patch_size,
                               stride=stride, padding=padding)
         self.norm = norm_layer(embed_dim) if norm_layer else nn.Identity()
@@ -336,7 +334,7 @@ class EfficientFormer(nn.Module):
                  init_cfg=None,
                  pretrained=None,
                  vit_num=0,
-                 distillation=True,
+                 distillation=False,
                  **kwargs):
         super().__init__()
 
@@ -456,7 +454,7 @@ class EfficientFormer(nn.Module):
         x = self.patch_embed(x)
         x = self.forward_tokens(x)
         if self.fork_feat:
-            # otuput features of four stages for dense prediction
+            # output features of four stages for dense prediction
             return x
         x = self.norm(x)
         if self.dist:
@@ -480,7 +478,6 @@ def _cfg(url='', **kwargs):
     }
 
 
-@register_model
 def efficientformer_l1(pretrained=False, **kwargs):
     model = EfficientFormer(
         layers=EfficientFormer_depth['l1'],
@@ -492,7 +489,6 @@ def efficientformer_l1(pretrained=False, **kwargs):
     return model
 
 
-@register_model
 def efficientformer_l3(pretrained=False, **kwargs):
     model = EfficientFormer(
         layers=EfficientFormer_depth['l3'],
@@ -504,7 +500,6 @@ def efficientformer_l3(pretrained=False, **kwargs):
     return model
 
 
-@register_model
 def efficientformer_l7(pretrained=False, **kwargs):
     model = EfficientFormer(
         layers=EfficientFormer_depth['l7'],

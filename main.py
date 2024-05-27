@@ -21,8 +21,8 @@ from models import *
 def get_args_parser():
     parser = argparse.ArgumentParser(
         'EfficientFormer training and evaluation script', add_help=False)
-    parser.add_argument('--batch-size', default=128, type=int)
-    parser.add_argument('--epochs', default=300, type=int)
+    parser.add_argument('--batch-size', default=16, type=int)
+    parser.add_argument('--epochs', default=500, type=int)
 
     # Model parameters
     parser.add_argument('--model', default='efficientformer_l1', type=str, metavar='MODEL',
@@ -137,7 +137,7 @@ def get_args_parser():
                         help='finetune from checkpoint')
 
     # Dataset parameters
-    parser.add_argument('--data-path', default='./imagenet', type=str,
+    parser.add_argument('--data-path', default='H:\\data_f\\flower_data', type=str,
                         help='dataset path')
     parser.add_argument('--data-set', default='IMNET', choices=['CIFAR', 'IMNET', 'INAT', 'INAT19'],
                         type=str, help='Image Net dataset path')
